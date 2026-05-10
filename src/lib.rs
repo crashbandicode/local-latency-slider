@@ -113,15 +113,6 @@ unsafe fn update_css(arg: u64) {
 
 #[skyline::main(name = "local-latency-slider")]
 pub fn main() {
-    if !utils::is_yuzu_emulator() {
-        skyline::error::show_error(
-            1,
-            "Compatibility Error",
-            "Local Latency Slider mod is currently only supported on yuzu emulator",
-        );
-        return;
-    }
-
     framerate::install();
     ldn::install();
     skyline::install_hook!(update_css);
@@ -135,5 +126,4 @@ pub fn main() {
         println!("MEASURING SPIN STRATEGY LATENCY...");
         experiments::measure_spin_strategy_latency(Some(8));
     }
-    
 }
