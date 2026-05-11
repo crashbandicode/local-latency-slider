@@ -2,7 +2,6 @@ use std::sync::atomic::{AtomicI8, Ordering};
 
 use skyline::hooks::InlineCtx;
 
-use crate::ldn;
 use crate::utils;
 
 const MAX_INPUT_BUFFER: u8 = 25;
@@ -63,17 +62,16 @@ impl ToString for Delay {
 
 static CURRENT_INPUT_DELAY: Delay = Delay::default();
 
+// No is_local_online() guard - buffer applies in all online modes
 #[skyline::hook(offset = 0x16ccc58, inline)]
 unsafe fn set_online_latency(ctx: &InlineCtx) {
-    if ldn::is_local_online() {
-        let auto = *(ctx.registers[19].x() as *mut u8);
-        let buffer = CURRENT_INPUT_DELAY.buffer.load(Ordering::SeqCst);
-        CURRENT_INPUT_DELAY
-            .last_auto
-            .store(auto as i8, Ordering::SeqCst);
-        if buffer >= 0 {
-            *(ctx.registers[19].x() as *mut u8) = buffer as u8;
-        }
+    let auto = *(ctx.registers[19].x() as *mut u8);
+    let buffer = CURRENT_INPUT_DELAY.buffer.load(Ordering::SeqCst);
+    CURRENT_INPUT_DELAY
+        .last_auto
+        .store(auto as i8, Ordering::SeqCst);
+    if buffer >= 0 {
+        *(ctx.registers[19].x() as *mut u8) = buffer as u8;
     }
 }
 
