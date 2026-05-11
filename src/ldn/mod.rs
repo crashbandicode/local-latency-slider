@@ -41,8 +41,7 @@ unsafe fn main_menu(_: &InlineCtx) {
 unsafe fn store_local_menu_pane(ctx: &InlineCtx) {
     update_in_game_flag(false);
     CUSTOM_CSS_NUM_PLAYERS_FLAG = true;
-    let handle = *((*(ctx.registers[0].x() + 8) as *const u64) + 0x10) as *const u64;
-    let handle = *handle;
+    let handle = *(((*((ctx.registers[0].x() + 8) as *const u64)) + 0x10) as *const u64);
     LOCAL_ROOM_PANE_HANDLE.store(handle, Ordering::SeqCst);
 }
 
